@@ -1,0 +1,27 @@
+# .dockerignore - Files and directories excluded from the Docker build context
+# Keeping the build context small speeds up builds and avoids accidentally
+# baking secrets or large unnecessary files into the image.
+
+# Never bundle installed packages — they are installed fresh by npm ci in the Dockerfile
+node_modules/
+
+# Exclude actual environment files that may contain secrets.
+# .env.example is intentionally NOT excluded because it is safe to include as documentation.
+.env
+.env.*
+!.env.example
+
+# Git metadata is irrelevant inside the container
+.git/
+.gitignore
+
+# Compose and Dockerfile files are only needed on the host
+docker-compose*.yml
+Dockerfile*
+
+# Editor and OS noise
+.npmrc
+*.log
+.DS_Store
+.vscode/
+.idea/

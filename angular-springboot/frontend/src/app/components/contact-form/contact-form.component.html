@@ -1,0 +1,86 @@
+<div class="form-card">
+  <h2 class="form-title">Add New Contact</h2>
+
+  <form #contactForm="ngForm" (ngSubmit)="onSubmit(contactForm)" novalidate>
+    <div class="form-row">
+      <!-- Name field — required, bound via [(ngModel)] two-way binding -->
+      <div class="form-group">
+        <label for="name">Name <span class="required">*</span></label>
+        <input
+          id="name"
+          name="name"
+          type="text"
+          class="form-control"
+          [(ngModel)]="model.name"
+          required
+          maxlength="100"
+          placeholder="Full name"
+          #nameField="ngModel"
+          [class.invalid]="nameField.invalid && nameField.touched">
+        <span class="field-error" *ngIf="nameField.invalid && nameField.touched">
+          Name is required
+        </span>
+      </div>
+
+      <!-- Email field — required with email validation -->
+      <div class="form-group">
+        <label for="email">Email <span class="required">*</span></label>
+        <input
+          id="email"
+          name="email"
+          type="email"
+          class="form-control"
+          [(ngModel)]="model.email"
+          required
+          email
+          maxlength="200"
+          placeholder="email@example.com"
+          #emailField="ngModel"
+          [class.invalid]="emailField.invalid && emailField.touched">
+        <span class="field-error" *ngIf="emailField.errors?.['required'] && emailField.touched">
+          Email is required
+        </span>
+        <span class="field-error" *ngIf="emailField.errors?.['email'] && emailField.touched">
+          Enter a valid email address
+        </span>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <!-- Phone field — optional -->
+      <div class="form-group">
+        <label for="phone">Phone</label>
+        <input
+          id="phone"
+          name="phone"
+          type="tel"
+          class="form-control"
+          [(ngModel)]="model.phone"
+          maxlength="20"
+          placeholder="+1 (555) 000-0000">
+      </div>
+
+      <!-- Company field — optional -->
+      <div class="form-group">
+        <label for="company">Company</label>
+        <input
+          id="company"
+          name="company"
+          type="text"
+          class="form-control"
+          [(ngModel)]="model.company"
+          maxlength="100"
+          placeholder="Company name">
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button
+        type="submit"
+        class="btn btn-primary"
+        [disabled]="contactForm.invalid || isSubmitting">
+        {{ isSubmitting ? 'Adding...' : 'Add Contact' }}
+      </button>
+    </div>
+  </form>
+</div>

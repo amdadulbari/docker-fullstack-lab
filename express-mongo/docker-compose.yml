@@ -1,0 +1,63 @@
+# docker-compose.yml - Defines the multi-container application stack
+#
+# Services:
+#   mongo  - MongoDB 7 database
+#   web    - Express API (built from our Dockerfile)
+#
+# Usage:
+#   cp .env.example .env
+#   docker compose up --build
+
+services:
+
+  # ---------------------------------------------------------------------------
+  # mongo - MongoDB database service
+  # ---------------------------------------------------------------------------
+  mongo:
+    image: mongo:4.4                        # MongoDB 4.4 — last version without AVX CPU requirement
+    container_name: express_mongo_db
+    restart: unless-stopped                 # Restart on crash; stop manually with 'docker compose down'
+    environment:
+      # Creates the initial database on first startup (if it doesn't exist)
+      MONGO_INITDB_DATABASE: productsdb
+    volumes:
+      # Named volume persists MongoDB data across container restarts and rebuilds.
+      # Without this, all data is lost every time the container is removed.
+      - mongo_data:/data/db
+    ports:
+      # Expose MongoDB on the host so you can connect with tools like Compass.
+      # Remove this in a hardened production environment to keep the DB internal.
+      - "27018:27017"
+    healthcheck:
+      # mongosh pings the admin database to verify MongoDB is fully ready.
+      # The 'web' service will not start until this check passes.
+      test: ["CMD", "mongo", "--eval", "db.adminCommand('ping')"]
+      interval: 10s       # Run the check every 10 seconds
+      timeout: 5s         # Fail if the check takes longer than 5 seconds
+      retries: 5          # Mark unhealthy after 5 consecutive failures
+      start_period: 20s   # Give MongoDB 20 seconds to initialise before counting failures
+
+  # ---------------------------------------------------------------------------
+  # web - Express API service
+  # ---------------------------------------------------------------------------
+  web:
+    build: .                                # Build image from the Dockerfile in the current directory
+    container_name: express_web
+    restart: unless-stopped
+    env_file: .env                          # Loads NODE_ENV, PORT, MONGODB_URI etc. from your .env file
+    ports:
+      - "3001:3000"                         # Map host port 3000 → container port 3000
+    depends_on:
+      mongo:
+        # 'service_healthy' means Docker will only start 'web' once the
+        # mongo healthcheck above reports a healthy status. This prevents
+        # the API from crashing because the database isn't ready yet.
+        condition: service_healthy
+
+# ---------------------------------------------------------------------------
+# Named Volumes
+# ---------------------------------------------------------------------------
+volumes:
+  mongo_data:
+    # A custom name prevents conflicts when running multiple projects locally
+    name: express_mongo_data

@@ -1,0 +1,18 @@
+<div class="contact-list">
+  <h2 class="list-title">
+    Contacts
+    <span class="contact-count">{{ contacts.length }}</span>
+  </h2>
+
+  <div *ngIf="contacts.length === 0" class="empty-state">
+    <p>No contacts yet. Add your first contact above.</p>
+  </div>
+
+  <div *ngIf="contacts.length > 0" class="contacts-grid">
+    <app-contact-item
+      *ngFor="let contact of contacts; trackBy: trackById"
+      [contact]="contact"
+      (deleted)="onDelete($event)">
+    </app-contact-item>
+  </div>
+</div>

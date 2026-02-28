@@ -1,0 +1,75 @@
+services:
+  # ---------------------------------------------------------------------------
+  # PostgreSQL Database Service
+  # ---------------------------------------------------------------------------
+  db:
+    image: postgres:16-alpine
+    container_name: nestjs_postgres_db
+    # Restart policy: restart the container automatically unless it was
+    # explicitly stopped by the user (e.g., docker compose stop).
+    restart: unless-stopped
+
+    # Load all variables from the .env file into the container's environment.
+    env_file:
+      - .env
+
+    # Pass specific environment variables that PostgreSQL's official image
+    # uses to initialize the database on first startup.
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+
+    volumes:
+      # Named volume — data persists across container restarts and rebuilds.
+      # Without this, all data is lost when the container is removed.
+      - postgres_data:/var/lib/postgresql/data
+
+    ports:
+      # Expose PostgreSQL to the host machine for local development tools
+      # (e.g., psql, TablePlus, DBeaver). Format: HOST:CONTAINER
+      - "5434:5432"
+
+    # Healthcheck: Docker regularly runs this command inside the container.
+    # The "web" service uses this to know when the DB is ready to accept connections.
+    # pg_isready checks if the PostgreSQL server is accepting connections.
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 10s    # How often to run the check
+      timeout: 5s      # Max time to wait for the check to complete
+      retries: 5       # Number of consecutive failures before marking unhealthy
+      start_period: 10s  # Grace period before health checks start (DB init time)
+
+  # ---------------------------------------------------------------------------
+  # NestJS Application Service
+  # ---------------------------------------------------------------------------
+  web:
+    # Build the image using the Dockerfile in the current directory.
+    build: .
+    container_name: nestjs_web
+    restart: unless-stopped
+
+    # Load environment variables from .env (DB_HOST, DB_PORT, etc.)
+    env_file:
+      - .env
+
+    ports:
+      - "3002:3000"
+
+    # depends_on with condition: service_healthy ensures that the "web"
+    # container only starts AFTER the "db" container passes its healthcheck.
+    # Without this condition, the app might try to connect to PostgreSQL
+    # before it's ready, causing startup failures.
+    depends_on:
+      db:
+        condition: service_healthy
+
+# ---------------------------------------------------------------------------
+# Named Volumes
+# ---------------------------------------------------------------------------
+# Declaring volumes here makes them "named volumes" managed by Docker.
+# They persist independently of the containers that use them.
+# Data survives: docker compose down (use docker compose down -v to remove).
+volumes:
+  postgres_data:
+    name: nestjs_postgres_data

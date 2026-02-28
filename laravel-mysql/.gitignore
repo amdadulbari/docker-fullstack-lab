@@ -1,0 +1,12 @@
+vendor/
+node_modules/
+.env
+.env.*
+!.env.example
+storage/logs/*.log
+*.log
+.DS_Store
+.vscode/
+.idea/
+public/hot
+public/storage

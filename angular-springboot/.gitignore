@@ -1,0 +1,36 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+target/
+out-tsc/
+
+# Environment secrets — never commit these
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.iml
+
+# Java compiled
+*.class
+*.jar
+*.war
+
+# Angular cache
+.angular/
+
+# Docker
+*.pid

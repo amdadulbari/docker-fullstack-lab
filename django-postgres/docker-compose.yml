@@ -1,0 +1,56 @@
+# ════════════════════════════════════════════════════════════════
+# docker-compose.yml — Django + PostgreSQL
+#
+# Services:
+#   db  → PostgreSQL 16 database
+#   web → Django app served by Gunicorn
+#
+# Usage:
+#   docker compose up --build       → build images and start everything
+#   docker compose down             → stop containers
+#   docker compose down -v          → stop + delete volumes (wipes DB data)
+# ════════════════════════════════════════════════════════════════
+
+services:
+
+  # ── PostgreSQL Database ─────────────────────────────────────────
+  db:
+    image: postgres:16-alpine          # alpine = smallest official image
+    container_name: django_postgres_db
+    restart: unless-stopped            # auto-restart on crash or reboot
+    env_file: .env                     # load DB credentials from .env file
+    environment:
+      POSTGRES_DB:       ${DB_NAME}
+      POSTGRES_USER:     ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      # Named volume → data persists across container restarts
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"                    # expose for local tools (DBeaver, psql, etc.)
+    healthcheck:
+      # Docker waits for this check to pass before starting 'web'
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  # ── Django Web Application ──────────────────────────────────────
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: django_web
+    restart: unless-stopped
+    env_file: .env                     # same .env file supplies Django settings
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy     # wait until PostgreSQL is ready
+
+# ── Named Volumes ───────────────────────────────────────────────
+volumes:
+  postgres_data:
+    name: django_postgres_data         # explicit name avoids random prefix

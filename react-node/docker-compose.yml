@@ -1,0 +1,85 @@
+###############################################################################
+# docker-compose.yml — Multi-service orchestration for the Todo App
+#
+# Services:
+#   db        — PostgreSQL 16 database
+#   backend   — Node.js / Express API (port 4000)
+#   frontend  — React SPA served by nginx (port 3000 → container 80)
+#
+# Startup order is enforced via depends_on + healthchecks:
+#   db must pass pg_isready before backend starts.
+#   backend must be running before frontend starts.
+###############################################################################
+
+services:
+
+  # ---------------------------------------------------------------------------
+  # PostgreSQL database
+  # ---------------------------------------------------------------------------
+  db:
+    image: postgres:16-alpine
+    container_name: react_node_db
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      POSTGRES_DB:       ${DB_NAME}
+      POSTGRES_USER:     ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      # Named volume persists data across container restarts and re-builds.
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      # Expose to the host for direct inspection with psql or a GUI client.
+      - "5436:5432"
+    healthcheck:
+      # pg_isready exits 0 only when PostgreSQL is accepting connections.
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+
+  # ---------------------------------------------------------------------------
+  # Express API backend
+  # ---------------------------------------------------------------------------
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: react_node_backend
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      PORT: 4000
+      NODE_ENV: production
+    ports:
+      - "4001:4000"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  # ---------------------------------------------------------------------------
+  # React frontend (nginx)
+  # ---------------------------------------------------------------------------
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        # VITE_API_URL is inlined into the JS bundle at build time.
+        # '/api/v1' means the browser calls the nginx proxy at the same origin.
+        VITE_API_URL: /api/v1
+    container_name: react_node_frontend
+    restart: unless-stopped
+    ports:
+      # Map host 3000 → nginx container port 80.
+      - "3003:80"
+    depends_on:
+      - backend
+
+# ---------------------------------------------------------------------------
+# Named volumes
+# ---------------------------------------------------------------------------
+volumes:
+  postgres_data:
+    name: react_node_postgres_data

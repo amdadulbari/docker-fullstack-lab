@@ -1,0 +1,24 @@
+#!/usr/bin/env php
+<?php
+
+/*
+|--------------------------------------------------------------------------
+| Laravel Artisan CLI
+|--------------------------------------------------------------------------
+| artisan is Laravel's CLI tool. Usage examples:
+|   php artisan migrate        — run database migrations
+|   php artisan make:model Foo — generate a model file
+|   php artisan route:list     — list all registered routes
+|   php artisan tinker         — interactive REPL
+*/
+
+define('LARAVEL_START', microtime(true));
+require __DIR__.'/vendor/autoload.php';
+$app = require_once __DIR__.'/bootstrap/app.php';
+$kernel = $app->make(Illuminate\Contracts\Console\Kernel::class);
+$status = $kernel->handle(
+    $input = new Symfony\Component\Console\Input\ArgvInput,
+    new Symfony\Component\Console\Output\ConsoleOutput
+);
+$kernel->terminate($input, $status);
+exit($status);

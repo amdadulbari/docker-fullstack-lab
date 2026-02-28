@@ -1,0 +1,21 @@
+# .gitignore - Files that should never be committed to version control
+
+# Installed packages — each developer/CI environment runs npm install
+node_modules/
+
+# Environment files contain secrets (DB URIs, API keys, passwords).
+# .env.example is the safe template that SHOULD be committed.
+.env
+.env.*
+!.env.example
+
+# Log files
+*.log
+npm-debug.log*
+
+# macOS metadata files
+.DS_Store
+
+# Editor configuration directories
+.vscode/
+.idea/

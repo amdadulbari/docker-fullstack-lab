@@ -1,0 +1,45 @@
+# ── Python ──────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# ── Virtual Environments ─────────────────────────────────────────
+.venv/
+venv/
+env/
+
+# ── Environment Files ────────────────────────────────────────────
+# Never copy secrets into the Docker image
+.env
+.env.*
+!.env.example
+
+# ── Django ───────────────────────────────────────────────────────
+*.sqlite3
+staticfiles/
+media/
+
+# ── Git ──────────────────────────────────────────────────────────
+.git/
+.gitignore
+
+# ── IDE / OS ─────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.DS_Store
+Thumbs.db
+
+# ── Docker ───────────────────────────────────────────────────────
+docker-compose*.yml
+Dockerfile*
+
+# ── Testing ──────────────────────────────────────────────────────
+.pytest_cache/
+.coverage
+htmlcov/

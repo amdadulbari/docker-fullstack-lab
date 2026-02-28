@@ -1,0 +1,13 @@
+# ── Web Framework ──────────────────────────────────────────
+fastapi==0.110.0
+
+# ── ASGI Server (production: gunicorn manages uvicorn workers) ──
+uvicorn[standard]==0.27.1
+gunicorn==21.2.0
+
+# ── Async ORM + PostgreSQL driver ──────────────────────────
+sqlalchemy==2.0.28
+asyncpg==0.29.0
+
+# ── Settings management (reads from .env) ──────────────────
+pydantic-settings==2.2.1

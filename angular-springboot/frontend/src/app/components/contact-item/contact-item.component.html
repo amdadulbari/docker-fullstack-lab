@@ -1,0 +1,40 @@
+<div class="contact-card" [class.inactive]="!contact.active">
+  <div class="contact-header">
+    <div class="contact-avatar">
+      {{ contact.name.charAt(0).toUpperCase() }}
+    </div>
+    <div class="contact-info">
+      <h3 class="contact-name">{{ contact.name }}</h3>
+      <span class="contact-badge" [class.active-badge]="contact.active" [class.inactive-badge]="!contact.active">
+        {{ contact.active ? 'Active' : 'Inactive' }}
+      </span>
+    </div>
+    <button
+      class="btn btn-danger btn-sm"
+      (click)="onDelete()"
+      title="Delete contact">
+      Delete
+    </button>
+  </div>
+
+  <div class="contact-details">
+    <div class="detail-row">
+      <span class="detail-icon">&#64;</span>
+      <a class="detail-value email-link" [href]="'mailto:' + contact.email">{{ contact.email }}</a>
+    </div>
+
+    <div class="detail-row" *ngIf="contact.phone">
+      <span class="detail-icon">#</span>
+      <span class="detail-value">{{ contact.phone }}</span>
+    </div>
+
+    <div class="detail-row" *ngIf="contact.company">
+      <span class="detail-icon">C</span>
+      <span class="detail-value">{{ contact.company }}</span>
+    </div>
+  </div>
+
+  <div class="contact-footer" *ngIf="contact.createdAt">
+    <span class="created-at">Added {{ contact.createdAt | date:'mediumDate' }}</span>
+  </div>
+</div>

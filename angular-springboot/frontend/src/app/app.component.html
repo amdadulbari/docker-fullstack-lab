@@ -1,0 +1,19 @@
+<div class="app-container">
+  <header class="app-header">
+    <h1>Contact Manager</h1>
+    <p class="subtitle">Angular + Spring Boot + PostgreSQL</p>
+  </header>
+
+  <main>
+    <app-contact-form (contactAdded)="onAdd($event)"></app-contact-form>
+
+    <div *ngIf="loading" class="loading">Loading contacts...</div>
+    <div *ngIf="error" class="error">{{ error }}</div>
+
+    <app-contact-list
+      *ngIf="!loading"
+      [contacts]="contacts"
+      (contactDeleted)="onDelete($event)">
+    </app-contact-list>
+  </main>
+</div>

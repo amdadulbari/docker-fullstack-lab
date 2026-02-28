@@ -1,0 +1,11 @@
+# ── Web Framework ──────────────────────────────────────────
+Flask==3.0.2
+
+# ── Redis Client ────────────────────────────────────────────
+redis==5.0.3
+
+# ── Environment Variable Management ────────────────────────
+python-decouple==3.8
+
+# ── Production WSGI Server ──────────────────────────────────
+gunicorn==21.2.0

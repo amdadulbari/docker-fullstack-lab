@@ -1,0 +1,351 @@
+/* ==========================================================================
+   App.css — Global styles for the Todo App
+   No external CSS library is used. All styling is plain CSS with CSS custom
+   properties (variables) for easy theming.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   CSS Custom Properties (design tokens)
+   -------------------------------------------------------------------------- */
+:root {
+  --color-bg:          #f0f2f5;
+  --color-surface:     #ffffff;
+  --color-border:      #e0e4ea;
+  --color-primary:     #4f6ef7;
+  --color-primary-hover: #3a57e8;
+  --color-danger:      #e74c3c;
+  --color-danger-hover: #c0392b;
+  --color-success:     #27ae60;
+  --color-text:        #1a1d23;
+  --color-text-muted:  #6b7280;
+  --color-error-bg:    #fef2f2;
+  --color-error-border:#fca5a5;
+  --color-error-text:  #991b1b;
+  --radius-sm:         4px;
+  --radius-md:         8px;
+  --radius-lg:         12px;
+  --shadow-sm:         0 1px 3px rgba(0,0,0,0.08);
+  --shadow-md:         0 4px 12px rgba(0,0,0,0.10);
+  --font-sans:         -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --transition:        0.18s ease;
+}
+
+/* --------------------------------------------------------------------------
+   Reset / base
+   -------------------------------------------------------------------------- */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+/* --------------------------------------------------------------------------
+   Layout
+   -------------------------------------------------------------------------- */
+.app-container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 2rem 1rem 4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* --------------------------------------------------------------------------
+   Header
+   -------------------------------------------------------------------------- */
+.app-header {
+  text-align: center;
+  padding: 2rem 0 0.5rem;
+}
+
+.app-title {
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  letter-spacing: -0.5px;
+}
+
+.app-subtitle {
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+  margin-top: 0.25rem;
+}
+
+/* --------------------------------------------------------------------------
+   Main content card
+   -------------------------------------------------------------------------- */
+.app-main {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+/* --------------------------------------------------------------------------
+   TodoForm
+   -------------------------------------------------------------------------- */
+.todo-form {
+  display: flex;
+  gap: 0.625rem;
+  background: var(--color-surface);
+  padding: 1rem;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--color-border);
+}
+
+.todo-form__input {
+  flex: 1;
+  padding: 0.625rem 0.875rem;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-size: 0.9375rem;
+  font-family: var(--font-sans);
+  color: var(--color-text);
+  background: var(--color-bg);
+  transition: border-color var(--transition), box-shadow var(--transition);
+  outline: none;
+}
+
+.todo-form__input:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(79, 110, 247, 0.15);
+}
+
+.todo-form__input::placeholder {
+  color: var(--color-text-muted);
+}
+
+.btn {
+  padding: 0.625rem 1.25rem;
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: 0.9375rem;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color var(--transition), transform var(--transition), box-shadow var(--transition);
+  white-space: nowrap;
+}
+
+.btn:active {
+  transform: scale(0.97);
+}
+
+.btn--primary {
+  background-color: var(--color-primary);
+  color: #ffffff;
+}
+
+.btn--primary:hover {
+  background-color: var(--color-primary-hover);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn--primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* --------------------------------------------------------------------------
+   Error banner
+   -------------------------------------------------------------------------- */
+.error-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background-color: var(--color-error-bg);
+  border: 1px solid var(--color-error-border);
+  border-radius: var(--radius-md);
+  color: var(--color-error-text);
+  font-size: 0.875rem;
+}
+
+.error-dismiss {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.25rem;
+  color: var(--color-error-text);
+  line-height: 1;
+  padding: 0 0.25rem;
+  flex-shrink: 0;
+}
+
+.error-dismiss:hover {
+  opacity: 0.7;
+}
+
+/* --------------------------------------------------------------------------
+   Loading spinner
+   -------------------------------------------------------------------------- */
+.loading-spinner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 3rem 0;
+  color: var(--color-text-muted);
+  font-size: 0.9375rem;
+}
+
+.spinner {
+  width: 22px;
+  height: 22px;
+  border: 3px solid var(--color-border);
+  border-top-color: var(--color-primary);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* --------------------------------------------------------------------------
+   TodoList
+   -------------------------------------------------------------------------- */
+.todo-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.todo-list__empty {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: var(--color-text-muted);
+  font-size: 0.9375rem;
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  border: 1px dashed var(--color-border);
+}
+
+/* --------------------------------------------------------------------------
+   TodoItem
+   -------------------------------------------------------------------------- */
+.todo-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.875rem 1rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--transition), border-color var(--transition);
+}
+
+.todo-item:hover {
+  box-shadow: var(--shadow-md);
+  border-color: #c5cde0;
+}
+
+/* Custom checkbox */
+.todo-item__checkbox {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  flex-shrink: 0;
+  position: relative;
+  transition: background-color var(--transition), border-color var(--transition);
+}
+
+.todo-item__checkbox:checked {
+  background-color: var(--color-success);
+  border-color: var(--color-success);
+}
+
+.todo-item__checkbox:checked::after {
+  content: '';
+  position: absolute;
+  left: 5px;
+  top: 2px;
+  width: 6px;
+  height: 10px;
+  border: 2px solid #ffffff;
+  border-top: none;
+  border-left: none;
+  transform: rotate(45deg);
+}
+
+.todo-item__checkbox:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.todo-item__title {
+  flex: 1;
+  font-size: 0.9375rem;
+  color: var(--color-text);
+  transition: color var(--transition);
+  word-break: break-word;
+}
+
+.todo-item__title--completed {
+  text-decoration: line-through;
+  color: var(--color-text-muted);
+}
+
+.todo-item__delete {
+  background: none;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  padding: 0.25rem 0.5rem;
+  cursor: pointer;
+  color: var(--color-text-muted);
+  font-size: 1rem;
+  line-height: 1;
+  flex-shrink: 0;
+  transition: color var(--transition), border-color var(--transition), background-color var(--transition);
+}
+
+.todo-item__delete:hover {
+  color: var(--color-danger);
+  border-color: var(--color-danger);
+  background-color: #fff5f5;
+}
+
+/* --------------------------------------------------------------------------
+   Footer
+   -------------------------------------------------------------------------- */
+.app-footer {
+  text-align: center;
+  color: var(--color-text-muted);
+  font-size: 0.8125rem;
+}
+
+/* --------------------------------------------------------------------------
+   Responsive — smaller screens
+   -------------------------------------------------------------------------- */
+@media (max-width: 480px) {
+  .app-container {
+    padding: 1rem 0.75rem 3rem;
+  }
+
+  .app-title {
+    font-size: 1.75rem;
+  }
+
+  .todo-form {
+    flex-direction: column;
+  }
+
+  .btn--primary {
+    width: 100%;
+  }
+}

@@ -1,0 +1,53 @@
+# ════════════════════════════════════════════════════════════════
+# docker-compose.yml — Flask + Redis
+#
+# Services:
+#   redis → Redis 7 (data store)
+#   web   → Flask app served by Gunicorn
+#
+# Usage:
+#   docker compose up --build       → build and start everything
+#   docker compose down             → stop containers
+#   docker compose down -v          → stop + wipe Redis data
+# ════════════════════════════════════════════════════════════════
+
+services:
+
+  # ── Redis ───────────────────────────────────────────────────────
+  redis:
+    image: redis:7-alpine             # smallest official Redis image
+    container_name: flask_redis
+    restart: unless-stopped
+    command: ["sh", "-c", "exec redis-server --appendonly yes $${REDIS_PASSWORD:+--requirepass $$REDIS_PASSWORD}"]
+    # appendonly yes → enables AOF persistence (survives container restarts)
+    # requirepass    → only set when REDIS_PASSWORD is non-empty
+    env_file: .env
+    volumes:
+      - redis_data:/data              # persist RDB + AOF files here
+    ports:
+      - "6379:6379"                   # expose for local tools (redis-cli, etc.)
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+
+  # ── Flask Web Application ───────────────────────────────────────
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: flask_web
+    restart: unless-stopped
+    env_file: .env
+    ports:
+      - "5000:5000"
+    depends_on:
+      redis:
+        condition: service_healthy    # wait until Redis is ready before starting
+
+# ── Named Volumes ───────────────────────────────────────────────
+volumes:
+  redis_data:
+    name: flask_redis_data            # explicit name avoids random prefix

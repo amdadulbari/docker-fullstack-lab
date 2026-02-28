@@ -1,0 +1,30 @@
+# Dependencies — these are installed inside the container via npm install/ci.
+# Copying node_modules from the host would include platform-specific binaries
+# compiled for your OS, which won't work inside the Linux container.
+node_modules/
+
+# Compiled output — the builder stage regenerates this from source.
+dist/
+
+# Environment files — never copy secrets into Docker images.
+# The .env file is loaded at runtime via env_file in docker-compose.yml.
+.env
+.env.*
+!.env.example
+
+# Git history is not needed in the image and adds unnecessary size.
+.git/
+.gitignore
+
+# Docker files themselves don't need to be in the image context.
+docker-compose*.yml
+Dockerfile*
+
+# Editor configs and OS metadata
+.vscode/
+.idea/
+*.DS_Store
+
+# Log files
+*.log
+npm-debug.log*
