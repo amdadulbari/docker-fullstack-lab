@@ -23,6 +23,7 @@ Each project is a self-contained full-stack application with its own `Dockerfile
 | `php-mysql` | — | Core PHP | MySQL |
 | `springboot-gradle-postgres` | — | Spring Boot (Gradle) | PostgreSQL |
 | `springboot-maven-mysql` | — | Spring Boot (Maven) | MySQL |
+| `dotnet-postgres` | — | ASP.NET Core 8 Web API | PostgreSQL |
 | `elk-stack` | — | Elasticsearch, Logstash, Kibana | — |
 
 ## Getting Started

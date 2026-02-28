@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AssemblyName>dotnet-postgres</AssemblyName>
+    <RootNamespace>DotnetPostgres</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!--
+      Npgsql.EntityFrameworkCore.PostgreSQL
+        → EF Core provider for PostgreSQL (pulls in Microsoft.EntityFrameworkCore)
+        → Uses Npgsql as the underlying ADO.NET driver
+
+      Swashbuckle.AspNetCore
+        → Generates Swagger UI and OpenAPI spec from controller attributes
+        → Available at /swagger in development
+    -->
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.4" />
+    <PackageReference Include="Swashbuckle.AspNetCore"                Version="6.5.0" />
+  </ItemGroup>
+
+</Project>

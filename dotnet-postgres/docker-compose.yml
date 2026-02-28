@@ -1,0 +1,53 @@
+# ════════════════════════════════════════════════════════════════
+# docker-compose.yml — ASP.NET Core 8 + PostgreSQL
+#
+# Services:
+#   db  → PostgreSQL 16
+#   web → ASP.NET Core 8 Web API
+#
+# Usage:
+#   docker compose up --build
+#   docker compose down -v   (to also wipe DB data)
+# ════════════════════════════════════════════════════════════════
+
+services:
+
+  # ── PostgreSQL Database ─────────────────────────────────────────
+  db:
+    image: postgres:16-alpine
+    container_name: dotnet_postgres_db
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      POSTGRES_DB:       ${DB_NAME}
+      POSTGRES_USER:     ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5439:5432"   # expose for local tools (DBeaver, psql, etc.)
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  # ── ASP.NET Core Web API ────────────────────────────────────────
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: dotnet_web
+    restart: unless-stopped
+    env_file: .env
+    ports:
+      - "8085:8080"   # host:container — access at http://localhost:8085
+    depends_on:
+      db:
+        condition: service_healthy   # wait for PostgreSQL to be ready
+
+# ── Named Volumes ────────────────────────────────────────────────
+volumes:
+  postgres_data:
+    name: dotnet_postgres_data
