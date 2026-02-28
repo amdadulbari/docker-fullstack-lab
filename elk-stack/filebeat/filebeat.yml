@@ -1,0 +1,64 @@
+# ════════════════════════════════════════════════════════════════
+# filebeat.yml — Filebeat Configuration
+#
+# Filebeat is a lightweight log shipper. It:
+#   1. Watches log files for new lines
+#   2. Sends each new line as an event to Logstash
+#   3. Remembers where it left off (registry) so it never re-sends
+#
+# Think of Filebeat as 'tail -f' for your logs, but network-aware.
+#
+# Full reference: https://www.elastic.co/guide/en/beats/filebeat/current/filebeat-reference-yml.html
+# ════════════════════════════════════════════════════════════════
+
+# ── Inputs ────────────────────────────────────────────────────────
+# Define which log files to watch and how to tag them.
+filebeat.inputs:
+
+  # ── Apache/Nginx Access Logs ────────────────────────────────────
+  - type: log
+    enabled: true
+    paths:
+      - /var/log/app/access.log   # mounted from ./logs/access.log on the host
+    fields:
+      log_type: access            # Logstash uses this to choose the grok pattern
+    fields_under_root: false      # keep fields nested under 'fields' key
+    # multiline: not needed — each log line is one HTTP request
+
+  # ── JSON Application Logs ───────────────────────────────────────
+  - type: log
+    enabled: true
+    paths:
+      - /var/log/app/app.log      # mounted from ./logs/app.log on the host
+    fields:
+      log_type: json
+    fields_under_root: false
+
+  # ── Plain Text / Other Logs ─────────────────────────────────────
+  - type: log
+    enabled: true
+    paths:
+      - /var/log/app/error.log
+    fields:
+      log_type: error
+    fields_under_root: false
+
+
+# ── Output ────────────────────────────────────────────────────────
+# Send events to Logstash (NOT directly to Elasticsearch).
+# Logstash adds parsing and enrichment before storage.
+output.logstash:
+  hosts: ["logstash:5044"]   # 'logstash' resolved by Docker's internal DNS
+
+
+# ── Logging ───────────────────────────────────────────────────────
+logging.level: info
+logging.to_files: false   # log to stdout only (visible via docker compose logs)
+
+
+# ── Processors ────────────────────────────────────────────────────
+# Processors run on each event before it is sent.
+processors:
+  # Add the hostname of the machine where Filebeat is running.
+  - add_host_metadata:
+      when.not.contains.tags: forwarded

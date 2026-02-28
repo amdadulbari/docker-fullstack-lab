@@ -1,0 +1,6 @@
+# Ignore generated log files — they are created by the generate-logs.sh script
+# and should not be committed to version control.
+*.log
+
+# Keep this directory tracked by git
+!.gitkeep

@@ -1,0 +1,34 @@
+# ════════════════════════════════════════════════════════════════
+# elasticsearch.yml — Elasticsearch Configuration
+#
+# Most settings are also configurable via environment variables
+# in docker-compose.yml. This file sets options that are easier
+# to express in YAML form.
+#
+# Full reference: https://www.elastic.co/guide/en/elasticsearch/reference/current/settings.html
+# ════════════════════════════════════════════════════════════════
+
+# ── Cluster ───────────────────────────────────────────────────────
+cluster.name: docker-elk
+
+# ── Node ──────────────────────────────────────────────────────────
+node.name: elasticsearch
+
+# ── Network ───────────────────────────────────────────────────────
+# Bind to all interfaces so other containers can reach Elasticsearch.
+# In production, restrict this to internal IPs only.
+network.host: 0.0.0.0
+
+# ── Discovery ─────────────────────────────────────────────────────
+# single-node: disables multi-node cluster discovery.
+# Required when running a single Elasticsearch instance (no peers).
+discovery.type: single-node
+
+# ── Security ──────────────────────────────────────────────────────
+# Disabled for local development — no TLS, no authentication.
+# In production, enable security and configure TLS + users.
+xpack.security.enabled: false
+
+# ── Monitoring ────────────────────────────────────────────────────
+# Collect monitoring data — visible in Kibana under Stack Monitoring.
+xpack.monitoring.collection.enabled: true

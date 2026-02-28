@@ -1,0 +1,10 @@
+# ── Generated log files ───────────────────────────────────────────
+logs/*.log
+
+# ── Elasticsearch data ────────────────────────────────────────────
+elasticsearch/data/
+
+# ── IDE / OS ─────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.DS_Store

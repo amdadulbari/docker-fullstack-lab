@@ -1,0 +1,25 @@
+# ════════════════════════════════════════════════════════════════
+# logstash.yml — Logstash Main Configuration
+#
+# This file controls Logstash's own settings (not the pipeline).
+# The pipeline (what data to read, transform, and write) is in:
+#   logstash/pipeline/logstash.conf
+#
+# Full reference: https://www.elastic.co/guide/en/logstash/current/logstash-settings-file.html
+# ════════════════════════════════════════════════════════════════
+
+# ── API / Monitoring ─────────────────────────────────────────────
+# Bind the Logstash monitoring REST API to all interfaces.
+# Access at http://localhost:9600/_node/stats
+http.host: "0.0.0.0"
+http.port: 9600
+
+# ── Pipeline ─────────────────────────────────────────────────────
+# Number of worker threads processing the pipeline.
+# Defaults to the number of CPU cores — leave at default for most cases.
+# pipeline.workers: 2
+
+# ── Monitoring (X-Pack) ───────────────────────────────────────────
+# Disable X-Pack monitoring (requires a licensed cluster).
+# Set to true only if Elasticsearch has monitoring enabled and is licensed.
+xpack.monitoring.enabled: false

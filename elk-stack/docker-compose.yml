@@ -1,0 +1,112 @@
+# ════════════════════════════════════════════════════════════════
+# docker-compose.yml — ELK Stack
+#
+# Pipeline:
+#   App logs (logs/) → Filebeat → Logstash → Elasticsearch → Kibana
+#
+# Services:
+#   elasticsearch → stores and indexes log data
+#   logstash      → receives logs from Filebeat, parses and enriches them
+#   kibana        → visualisation dashboard (UI at http://localhost:5601)
+#   filebeat      → lightweight agent that ships logs to Logstash
+#
+# Usage:
+#   docker compose up -d
+#   docker compose down -v   (stop + wipe all data)
+#
+# First-time startup is slow (~60-90s) as Elasticsearch initialises.
+# Watch progress: docker compose logs -f elasticsearch
+# ════════════════════════════════════════════════════════════════
+
+services:
+
+  # ── Elasticsearch ────────────────────────────────────────────────
+  # Storage and search engine — the core of the ELK stack.
+  # All processed log events are indexed here.
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.12.0
+    container_name: elk_elasticsearch
+    restart: unless-stopped
+    environment:
+      # Single-node mode — no cluster discovery needed for local dev
+      - discovery.type=single-node
+      # Heap size: set Xms == Xmx to prevent heap resizing at runtime.
+      # Minimum 512m; increase to 1g/2g for production workloads.
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+      # Disable security (TLS + auth) for local development.
+      # In production, NEVER disable security.
+      - xpack.security.enabled=false
+      # Enable monitoring data collection
+      - xpack.monitoring.collection.enabled=true
+    volumes:
+      - ./elasticsearch/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
+      - elasticsearch_data:/usr/share/elasticsearch/data
+    ports:
+      - "9200:9200"   # REST API — curl http://localhost:9200/_cluster/health
+    healthcheck:
+      # Wait for Elasticsearch to report green or yellow cluster health
+      test: ["CMD-SHELL", "curl -sf http://localhost:9200/_cluster/health | grep -q '\"status\":\"green\"\\|\"status\":\"yellow\"'"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+      start_period: 60s   # Give ES plenty of time to initialise on first run
+
+
+  # ── Logstash ─────────────────────────────────────────────────────
+  # Data processing pipeline: receives from Filebeat, parses, enriches,
+  # and forwards to Elasticsearch.
+  logstash:
+    image: docker.elastic.co/logstash/logstash:8.12.0
+    container_name: elk_logstash
+    restart: unless-stopped
+    volumes:
+      # Main config: JVM settings, API endpoint, monitoring
+      - ./logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:ro
+      # Pipeline directory: all .conf files here are loaded automatically
+      - ./logstash/pipeline:/usr/share/logstash/pipeline:ro
+    ports:
+      - "5044:5044"   # Beats input — Filebeat sends logs here
+      - "9600:9600"   # Logstash monitoring API
+    depends_on:
+      elasticsearch:
+        condition: service_healthy   # don't start until ES is ready
+
+
+  # ── Kibana ───────────────────────────────────────────────────────
+  # Browser-based visualisation UI. Connect to http://localhost:5601
+  # Use it to explore logs, build dashboards, and create visualisations.
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.12.0
+    container_name: elk_kibana
+    restart: unless-stopped
+    volumes:
+      - ./kibana/kibana.yml:/usr/share/kibana/config/kibana.yml:ro
+    ports:
+      - "5601:5601"   # Kibana UI
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+
+
+  # ── Filebeat ─────────────────────────────────────────────────────
+  # Lightweight log shipper. Watches the logs/ directory and forwards
+  # new lines to Logstash as they are written.
+  filebeat:
+    image: docker.elastic.co/beats/filebeat:8.12.0
+    container_name: elk_filebeat
+    restart: unless-stopped
+    # root is required to read log files and avoid strict permission errors
+    user: root
+    command: filebeat -e --strict.perms=false
+    volumes:
+      - ./filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+      # Mount the local logs/ directory as read-only inside the container
+      - ./logs:/var/log/app:ro
+    depends_on:
+      - logstash
+
+
+# ── Named Volumes ────────────────────────────────────────────────
+volumes:
+  elasticsearch_data:
+    name: elk_elasticsearch_data

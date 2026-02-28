@@ -1,0 +1,34 @@
+# ════════════════════════════════════════════════════════════════
+# kibana.yml — Kibana Configuration
+#
+# Kibana is the browser-based UI for the ELK stack.
+# It reads data from Elasticsearch and lets you:
+#   - Explore raw log events (Discover)
+#   - Build charts and dashboards (Dashboard)
+#   - Monitor the Elasticsearch cluster (Stack Monitoring)
+#   - Manage index patterns and saved searches
+#
+# Access at: http://localhost:5601
+#
+# Full reference: https://www.elastic.co/guide/en/kibana/current/settings.html
+# ════════════════════════════════════════════════════════════════
+
+# ── Server ────────────────────────────────────────────────────────
+# Bind to all interfaces so it's reachable from the host machine.
+server.host: "0.0.0.0"
+server.port: 5601
+server.name: "kibana"
+
+# ── Elasticsearch Connection ──────────────────────────────────────
+# 'elasticsearch' is the Docker Compose service name — Docker's internal
+# DNS resolves it to the Elasticsearch container's IP automatically.
+elasticsearch.hosts: ["http://elasticsearch:9200"]
+
+# ── Monitoring ────────────────────────────────────────────────────
+# Tell Kibana that Elasticsearch is running inside a container.
+# Enables container-aware metric collection in Stack Monitoring.
+monitoring.ui.container.elasticsearch.enabled: true
+
+# ── Logging ───────────────────────────────────────────────────────
+# Reduce log verbosity. Options: fatal, error, warn, info, debug, trace.
+logging.root.level: warn
