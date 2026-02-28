@@ -24,7 +24,8 @@ ENV PATH="/opt/venv/bin:$PATH"
 
 # Install Python dependencies first (Docker layer caching: only re-run if requirements.txt changes)
 COPY requirements.txt .
-RUN pip install --upgrade pip && \
+# hadolint ignore=DL3013
+RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
 
 
@@ -51,11 +52,9 @@ RUN addgroup --system appgroup && \
 # Copy application source code
 COPY . .
 
-# Give the non-root user ownership of the app directory
-RUN chown -R appuser:appgroup /app
-
-# Make the entrypoint script executable
-RUN chmod +x entrypoint.sh
+# Give the non-root user ownership of the app directory and make entrypoint executable
+RUN chown -R appuser:appgroup /app && \
+    chmod +x entrypoint.sh
 
 # Switch to non-root user for all subsequent commands
 USER appuser

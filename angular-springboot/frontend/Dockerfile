@@ -14,9 +14,6 @@ RUN npm run build
 # Stage 2: Production — serve with nginx
 FROM nginx:alpine AS production
 
-# Remove default nginx config
-RUN rm /etc/nginx/conf.d/default.conf
-
 # Write custom nginx config with SPA routing + proxy to backend
 RUN cat > /etc/nginx/conf.d/default.conf <<'EOF'
 upstream backend {

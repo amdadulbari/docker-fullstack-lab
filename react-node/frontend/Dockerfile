@@ -31,10 +31,8 @@ RUN npm run build
 # =============================================================================
 FROM nginx:alpine AS production
 
-# Remove the default nginx config and replace with our SPA-aware config.
-# Using printf avoids shell escaping issues with heredocs in Docker.
-RUN rm /etc/nginx/conf.d/default.conf
-
+# Write our SPA-aware config, overwriting the default.
+# hadolint ignore=SC2016
 RUN printf 'server {\n\
   listen 80;\n\
 \n\

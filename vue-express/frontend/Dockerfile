@@ -28,6 +28,7 @@ COPY --from=builder /app/dist /usr/share/nginx/html
 # Write a custom nginx config with:
 #   - SPA routing support (try_files → index.html)
 #   - Reverse proxy for /api and /health → Express backend
+# hadolint ignore=SC2016
 RUN printf 'server {\n\
     listen 80;\n\
     root /usr/share/nginx/html;\n\

@@ -19,7 +19,8 @@ ENV PATH="/opt/venv/bin:$PATH"
 
 # Install dependencies (layer is cached unless requirements.txt changes)
 COPY requirements.txt .
-RUN pip install --upgrade pip && \
+# hadolint ignore=DL3013
+RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
 
 
