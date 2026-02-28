@@ -24,7 +24,7 @@ services:
   # Storage and search engine — the core of the ELK stack.
   # All processed log events are indexed here.
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:8.12.0
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.17.0
     container_name: elk_elasticsearch
     restart: unless-stopped
     environment:
@@ -56,7 +56,7 @@ services:
   # Data processing pipeline: receives from Filebeat, parses, enriches,
   # and forwards to Elasticsearch.
   logstash:
-    image: docker.elastic.co/logstash/logstash:8.12.0
+    image: docker.elastic.co/logstash/logstash:8.17.0
     container_name: elk_logstash
     restart: unless-stopped
     volumes:
@@ -76,7 +76,7 @@ services:
   # Browser-based visualisation UI. Connect to http://localhost:5601
   # Use it to explore logs, build dashboards, and create visualisations.
   kibana:
-    image: docker.elastic.co/kibana/kibana:8.12.0
+    image: docker.elastic.co/kibana/kibana:8.17.0
     container_name: elk_kibana
     restart: unless-stopped
     volumes:
@@ -92,7 +92,7 @@ services:
   # Lightweight log shipper. Watches the logs/ directory and forwards
   # new lines to Logstash as they are written.
   filebeat:
-    image: docker.elastic.co/beats/filebeat:8.12.0
+    image: docker.elastic.co/beats/filebeat:8.17.0
     container_name: elk_filebeat
     restart: unless-stopped
     # root is required to read log files and avoid strict permission errors

@@ -6,7 +6,7 @@
 # ════════════════════════════════════════════════════════════════
 
 # ── Stage 1: Builder ─────────────────────────────────────────────
-FROM python:3.12-slim AS builder
+FROM python:3.13-slim AS builder
 
 WORKDIR /app
 
@@ -24,7 +24,7 @@ RUN pip install --upgrade pip && \
 
 
 # ── Stage 2: Production ───────────────────────────────────────────
-FROM python:3.12-slim AS production
+FROM python:3.13-slim AS production
 
 WORKDIR /app
 

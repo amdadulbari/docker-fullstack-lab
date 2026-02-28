@@ -2,7 +2,7 @@
 # docker-compose.yml — Flask + Redis
 #
 # Services:
-#   redis → Redis 7 (data store)
+#   redis → Redis 7.4 (data store)
 #   web   → Flask app served by Gunicorn
 #
 # Usage:
@@ -15,7 +15,7 @@ services:
 
   # ── Redis ───────────────────────────────────────────────────────
   redis:
-    image: redis:7-alpine             # smallest official Redis image
+    image: redis:7.4-alpine           # smallest official Redis image
     container_name: flask_redis
     restart: unless-stopped
     command: ["sh", "-c", "exec redis-server --appendonly yes $${REDIS_PASSWORD:+--requirepass $$REDIS_PASSWORD}"]

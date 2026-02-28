@@ -1,7 +1,7 @@
 # docker-compose.yml - Defines the multi-container application stack
 #
 # Services:
-#   mongo  - MongoDB 7 database
+#   mongo  - MongoDB 8 database
 #   web    - Express API (built from our Dockerfile)
 #
 # Usage:
@@ -14,7 +14,7 @@ services:
   # mongo - MongoDB database service
   # ---------------------------------------------------------------------------
   mongo:
-    image: mongo:4.4                        # MongoDB 4.4 — last version without AVX CPU requirement
+    image: mongo:8.0
     container_name: express_mongo_db
     restart: unless-stopped                 # Restart on crash; stop manually with 'docker compose down'
     environment:
@@ -31,7 +31,7 @@ services:
     healthcheck:
       # mongosh pings the admin database to verify MongoDB is fully ready.
       # The 'web' service will not start until this check passes.
-      test: ["CMD", "mongo", "--eval", "db.adminCommand('ping')"]
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')", "--quiet"]
       interval: 10s       # Run the check every 10 seconds
       timeout: 5s         # Fail if the check takes longer than 5 seconds
       retries: 5          # Mark unhealthy after 5 consecutive failures

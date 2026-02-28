@@ -3,7 +3,7 @@
 # Install all dependencies (including devDependencies needed for the build)
 # and compile the React app into a static dist/ directory.
 # =============================================================================
-FROM node:20-alpine AS builder
+FROM node:22-alpine AS builder
 
 WORKDIR /app
 

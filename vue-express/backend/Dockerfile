@@ -1,7 +1,7 @@
 # ============================================================
 # Stage 1 — deps: install only production dependencies
 # ============================================================
-FROM node:20-alpine AS deps
+FROM node:22-alpine AS deps
 
 WORKDIR /app
 
@@ -13,7 +13,7 @@ RUN npm ci --only=production
 # ============================================================
 # Stage 2 — production image
 # ============================================================
-FROM node:20-alpine AS production
+FROM node:22-alpine AS production
 
 WORKDIR /app
 

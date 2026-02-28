@@ -1,6 +1,6 @@
 services:
   mongo:
-    image: mongo:4.4
+    image: mongo:8.0
     container_name: vue_express_mongo
     restart: unless-stopped
     environment:
@@ -10,7 +10,7 @@ services:
     ports:
       - "27019:27017"
     healthcheck:
-      test: ["CMD", "mongo", "--eval", "db.adminCommand('ping')"]
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')", "--quiet"]
       interval: 10s
       timeout: 5s
       retries: 5

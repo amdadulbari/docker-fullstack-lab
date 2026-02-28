@@ -1,5 +1,5 @@
 # ─── Stage 1: Install Composer dependencies ───────────────────────
-FROM php:8.2-cli-alpine AS builder
+FROM php:8.4-cli-alpine AS builder
 
 WORKDIR /app
 
@@ -15,7 +15,7 @@ RUN apk add --no-cache \
     && docker-php-ext-install pdo_mysql mbstring xml
 
 # Install Composer
-COPY --from=composer:2.7 /usr/bin/composer /usr/bin/composer
+COPY --from=composer:2.8 /usr/bin/composer /usr/bin/composer
 
 # Copy dependency definition and install (without dev deps for production)
 COPY composer.json .
@@ -30,7 +30,7 @@ RUN mkdir -p bootstrap/cache storage/logs storage/framework/cache storage/framew
     && composer dump-autoload --optimize
 
 # ─── Stage 2: Production image ────────────────────────────────────
-FROM php:8.2-cli-alpine AS production
+FROM php:8.4-cli-alpine AS production
 
 WORKDIR /app
 

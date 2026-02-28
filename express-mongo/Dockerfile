@@ -8,7 +8,7 @@
 # =============================================================================
 # Stage 1: deps — install production dependencies
 # =============================================================================
-FROM node:20-alpine AS deps
+FROM node:22-alpine AS deps
 
 # Set a working directory inside the container
 WORKDIR /app
@@ -26,7 +26,7 @@ RUN npm ci --only=production
 # =============================================================================
 # Stage 2: production — the final, slim runtime image
 # =============================================================================
-FROM node:20-alpine AS production
+FROM node:22-alpine AS production
 
 # Set working directory
 WORKDIR /app

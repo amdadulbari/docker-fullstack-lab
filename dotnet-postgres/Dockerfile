@@ -1,5 +1,5 @@
 # ════════════════════════════════════════════════════════════════
-# Dockerfile — ASP.NET Core 8 + PostgreSQL
+# Dockerfile — ASP.NET Core 9 + PostgreSQL
 # Multi-stage build:
 #   Stage 1 (builder)    → restores NuGet packages and publishes the app
 #   Stage 2 (production) → copies only the published output, runs as non-root
@@ -11,7 +11,7 @@
 
 
 # ── Stage 1: Builder ─────────────────────────────────────────────
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS builder
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS builder
 
 WORKDIR /app
 
@@ -29,7 +29,7 @@ RUN dotnet publish -c Release -o /app/publish --no-restore
 
 
 # ── Stage 2: Production ───────────────────────────────────────────
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS production
+FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS production
 
 WORKDIR /app
 

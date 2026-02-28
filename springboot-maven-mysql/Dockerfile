@@ -1,7 +1,7 @@
 # ─────────────────────────────────────────────
 # Stage 1: Build
 # ─────────────────────────────────────────────
-FROM maven:3.9.6-eclipse-temurin-17-alpine AS builder
+FROM maven:3.9.9-eclipse-temurin-21-alpine AS builder
 
 WORKDIR /app
 
@@ -21,7 +21,7 @@ RUN mvn package -DskipTests -B
 # ─────────────────────────────────────────────
 # Stage 2: Production runtime (minimal image)
 # ─────────────────────────────────────────────
-FROM eclipse-temurin:17-jre-alpine
+FROM eclipse-temurin:21-jre-alpine
 
 WORKDIR /app
 

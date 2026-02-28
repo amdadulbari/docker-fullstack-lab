@@ -1,11 +1,11 @@
 # =============================================================================
 # Stage 1: Builder
 # =============================================================================
-# Use the official Node.js 20 Alpine image as the build base.
+# Use the official Node.js 22 Alpine image as the build base.
 # Alpine is a minimal Linux distribution (~5MB) that keeps image sizes small.
 # We install ALL dependencies (including devDependencies) here because we need
 # the NestJS CLI and TypeScript compiler to build the application.
-FROM node:20-alpine AS builder
+FROM node:22-alpine AS builder
 
 # Set the working directory inside the container.
 # All subsequent commands run relative to this path.
@@ -38,7 +38,7 @@ RUN npm run build
 # - NestJS CLI
 # - Any devDependencies
 # Result: a much smaller, more secure production image.
-FROM node:20-alpine AS production
+FROM node:22-alpine AS production
 
 WORKDIR /app
 

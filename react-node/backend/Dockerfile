@@ -5,7 +5,7 @@
 # Using npm ci (rather than npm install) guarantees a reproducible install
 # locked to package-lock.json.
 # =============================================================================
-FROM node:20-alpine AS deps
+FROM node:22-alpine AS deps
 
 WORKDIR /app
 
@@ -21,7 +21,7 @@ RUN npm ci --only=production
 # the deps stage and the application source code.
 # Running as the non-root "node" user follows the principle of least privilege.
 # =============================================================================
-FROM node:20-alpine AS production
+FROM node:22-alpine AS production
 
 WORKDIR /app
 

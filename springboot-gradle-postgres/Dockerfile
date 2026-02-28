@@ -4,7 +4,7 @@
 # The Gradle daemon is disabled (--no-daemon) to avoid memory issues in
 # ephemeral build containers.
 # =============================================================================
-FROM gradle:8.6-jdk17-alpine AS builder
+FROM gradle:8.10-jdk21-alpine AS builder
 
 WORKDIR /app
 
@@ -25,7 +25,7 @@ RUN gradle bootJar --no-daemon -x test
 # Uses a minimal JRE-only image (no JDK / Gradle) to keep the final image small
 # and reduce the attack surface.
 # =============================================================================
-FROM eclipse-temurin:17-jre-alpine
+FROM eclipse-temurin:21-jre-alpine
 
 # Create a dedicated non-root user and group so the JVM process does not run
 # as root inside the container (principle of least privilege).
