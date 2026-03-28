@@ -25,7 +25,7 @@ services:
     volumes:
       - redis_data:/data              # persist RDB + AOF files here
     ports:
-      - "6379:6379"                   # expose for local tools (redis-cli, etc.)
+      - "6380:6379"                   # expose for local tools (redis-cli, etc.)
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 10s
@@ -42,7 +42,7 @@ services:
     restart: unless-stopped
     env_file: .env
     ports:
-      - "5000:5000"
+      - "5001:5000"
     depends_on:
       redis:
         condition: service_healthy    # wait until Redis is ready before starting
