@@ -1,0 +1,22 @@
+# =============================================================================
+# docker-compose for the MULTI-STAGE production image.
+#
+# Unlike the dev project, there are NO source bind-mounts here: the image is
+# self-contained (nginx + the pre-built static site). You rebuild the image to
+# ship a new version — that is exactly how production deployments behave.
+# =============================================================================
+services:
+  web:
+    build: .
+    # Map host port 8080 -> container port 80 (nginx).
+    # Open http://localhost:8080
+    ports:
+      - "8080:80"
+    restart: unless-stopped
+    # Container-level health check hitting the /health endpoint from nginx.conf.
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:80/health"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 5s

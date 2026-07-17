@@ -26,6 +26,22 @@ Each project is a self-contained full-stack application with its own `Dockerfile
 | `dotnet-postgres` | — | ASP.NET Core 8 Web API | PostgreSQL |
 | `elk-stack` | — | Elasticsearch, Logstash, Kibana | — |
 
+## Dockerfile Teaching Examples
+
+Two focused, **frontend-only** React (Vite) apps for learning how to *write*
+Dockerfiles. They are self-contained (no backend, database, or API keys), so
+they build and run anywhere — ideal for a hands-on class.
+
+| Project | Dockerfile style | Runs | Image size | Open at |
+|---------|------------------|------|-----------|---------|
+| `react-dev-singlestage` | **Single-stage**, development mode | Vite dev server + HMR | ~450 MB | http://localhost:5173 |
+| `react-nginx-multistage` | **Multi-stage**, production | nginx serving static build | ~74 MB | http://localhost:8080 |
+
+Read them side by side to understand *why* production frontends use multi-stage
+builds — the multi-stage image is ~6× smaller because Node.js and `node_modules`
+are discarded after the build stage. Each folder's `README.md` walks through its
+`Dockerfile` line by line.
+
 ## Getting Started
 
 Every project follows the same workflow:

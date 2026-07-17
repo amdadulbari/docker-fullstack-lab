@@ -1,0 +1,25 @@
+# =============================================================================
+# docker-compose for the SINGLE-STAGE development image.
+#
+# The key teaching point here is the bind-mount + anonymous volume combination
+# that makes hot-reload work while keeping the container's node_modules intact.
+# =============================================================================
+services:
+  web:
+    build: .
+    # Map host port 5173 -> container port 5173 (the Vite dev server).
+    # Open http://localhost:5173 in your browser.
+    ports:
+      - "5173:5173"
+    volumes:
+      # 1) Bind-mount the project source into the container. Editing a file on
+      #    the host instantly updates it in the container, and Vite's HMR pushes
+      #    the change to the browser — no rebuild needed.
+      - .:/app
+      # 2) Anonymous volume for node_modules. Without this, the bind-mount above
+      #    would hide the node_modules that were installed during the build,
+      #    breaking the app. This line "protects" the container's node_modules.
+      - /app/node_modules
+    environment:
+      # Belt-and-suspenders for file watching inside containers (see vite.config.js).
+      - CHOKIDAR_USEPOLLING=true

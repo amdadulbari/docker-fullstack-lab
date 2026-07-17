@@ -1,0 +1,14 @@
+# Never copy these into the image. Keeps the build context small and prevents
+# the host's node_modules (possibly built for a different OS/arch) from leaking
+# in and shadowing the container's freshly installed modules.
+node_modules
+dist
+.git
+.gitignore
+Dockerfile
+.dockerignore
+docker-compose.yml
+npm-debug.log
+*.log
+.DS_Store
+.env
